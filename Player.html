@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPlayer</title>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-model="query" @keyup.enter="searchMusic">
+        <input type="button" value="搜 索" @click="searchMusic">
+        <div v-if="musicList.length!=0">
+            <br>
+            <img :src="musicCover" :title="musicCoverName" v-if="musicCover.length!=0" width="100px" height="100px">
+            <br>
+            <audio :src="musicUrl" controls autoplay loop></audio>
+            <h2>搜索结果：</h2>
+            <table border="1">
+                <tr>
+                    <th>歌曲名</th>
+                    <th>歌手</th>
+                    <th>操作</th>
+                </tr>
+                <tr v-for="item in musicList">
+                    <td>{{item.name}}</td>
+                    <td>{{item.artists[0].name}}</td>
+                    <td><a href="javascript:;" @click="playMusic(item.id)">播放</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
