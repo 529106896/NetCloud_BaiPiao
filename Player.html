@@ -13,10 +13,12 @@
         <input type="text" v-model="query" @keyup.enter="searchMusic">
         <input type="button" value="搜 索" @click="searchMusic">
         <div v-if="musicList.length!=0">
-            <br>
-            <img :src="musicCover" :title="musicCoverName" v-if="musicCover.length!=0" width="100px" height="100px">
-            <br>
-            <audio :src="musicUrl" controls autoplay loop></audio>
+            <div>
+                <h2 v-if="musicUrl.length!=0&&currentIndex!=-1">正在播放：{{musicList[currentIndex].name}} - {{musicList[currentIndex].artists[0].name}}</h2>
+                <img :src="musicCover" :title="musicCoverName" v-if="musicCover.length!=0" width="100px" height="100px">
+                <br>
+                <audio :src="musicUrl" controls autoplay loop></audio>
+            </div>
             <h2>搜索结果：共{{searchResultCount}}个结果</h2>
             <table border="1">
                 <tr>
@@ -27,7 +29,7 @@
                 <tr v-for="item in musicList">
                     <td>{{item.name}}</td>
                     <td>{{item.artists[0].name}}</td>
-                    <td><a href="javascript:;" @click="playMusic(item.id)">播放</a></td>
+                    <td><a href="javascript:;" @click="playMusic(item.id, musicList.indexOf(item))">播放</a></td>
                 </tr>
             </table>
             <div v-if="searchHasMore==true">

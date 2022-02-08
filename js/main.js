@@ -10,7 +10,8 @@ var app = new Vue({
         searchMaxPage: 0,
         currentPage: 0,
         currentOffSet: 0,
-        searchResultCount: 0
+        searchResultCount: 0,
+        currentIndex: -1
     },
     methods: {
         searchMusic: function() {
@@ -78,9 +79,10 @@ var app = new Vue({
                 }
             )
         },
-        playMusic: function(musicId) {
+        playMusic: function(musicId, index) {
             //this.musicUrl = "https://music.163.com/song/media/outer/url?id=" + musicId + ".mp3";
             var tmp = this;
+            tmp.currentIndex = index;
             axios.get("https://music-api.heheda.top/song/url?id=" + musicId).then(
                 function(response) {
                     //console.log(response);
