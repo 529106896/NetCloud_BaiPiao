@@ -11,7 +11,9 @@ var app = new Vue({
         currentPage: 0,
         currentOffSet: 0,
         searchResultCount: 0,
-        currentIndex: -1
+        currentIndex: -1,
+        lyricObjArr: [],
+        currentLyricIndex: -1
     },
     methods: {
         searchMusic: function() {
@@ -41,6 +43,9 @@ var app = new Vue({
                     tmp.musicUrl = "";
                     tmp.musicCover = "";
                     tmp.musicCoverName = "";
+                    tmp.currentIndex = -1;
+                    tmp.lyricObjArr = [];
+                    tmp.currentLyricIndex = -1;
                     //console.log(tmp.musicList);
                 },
                 function(err) {
@@ -79,6 +84,19 @@ var app = new Vue({
                 }
             )
         },
+        formatLyricTime: function(time) {
+            const regMin = /.*:/;
+            const regSec = /:.*\./;
+            const regMs = /\./;
+
+            const min = parseInt(time.match(regMin)[0].slice(0, 2));
+            let sec = parseInt(time.match(regSec)[0].slice(1, 3));
+            const ms = time.slice(time.match(regMs).index + 1, time.match(regMs).index + 3);
+            if (min !== 0) {
+                sec += min * 60
+            }
+            return Number(sec + '.' + ms);
+        },
         playMusic: function(musicId, index) {
             //this.musicUrl = "https://music.163.com/song/media/outer/url?id=" + musicId + ".mp3";
             var tmp = this;
@@ -106,7 +124,49 @@ var app = new Vue({
                 function(err) {
                     console.log(err);
                 }
+            );
+            axios.get("https://music-api.heheda.top/lyric?id=" + musicId).then(
+                function(response) {
+                    //console.log(response);
+                    const lineArr = response.data.lrc.lyric.split(/\n/);
+                    //console.log(lineArr);
+                    const regTime = /\[\d{2}:\d{2}.\d{2,3}\]/;
+                    lineArr.forEach(item => {
+                        if (item == '') return;
+                        const obj = {};
+                        const time = item.match(regTime);
+
+                        obj.lyric = item.split(']')[1].trim() === '' ? '' : item.split(']')[1].trim();
+                        obj.time = time ? tmp.formatLyricTime(time[0].slice(1, time[0].length - 1)) : 0;
+                        obj.uid = Math.random().toString().slice(-6);
+                        //console.log(obj);
+                        if (obj.lyric == '') {
+                            console.log('这一行没有歌词');
+                        } else {
+                            tmp.lyricObjArr.push(obj);
+                        }
+                    });
+
+                },
+                function(err) {
+                    console.log(err);
+                }
             )
+        },
+        changeLyric: function() {
+            const curr = document.querySelector("audio").currentTime;
+            //console.log(curr);
+            //console.log(this.lyricObjArr);
+            for(let tmp = this.lyricObjArr.length - 1; tmp >= 0; tmp--) {
+                if (curr > parseInt(this.lyricObjArr[tmp].time)) {
+                    //const index = this.$refs.lyric[tmp].dataset.index;
+                    //console.log(tmp);
+                    //console.log(this.lyricObjArr[tmp].lyric);
+                    this.currentLyricIndex = tmp;
+                    break;
+                    //console.log(this.lyricObjArr[tmp].lyric);
+                }
+            }
         }
     }
 })
