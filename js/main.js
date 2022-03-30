@@ -129,6 +129,7 @@ var app = new Vue({
                 function(response) {
                     //console.log(response);
                     const lineArr = response.data.lrc.lyric.split(/\n/);
+                    tmp.lyricObjArr = [];
                     //console.log(lineArr);
                     const regTime = /\[\d{2}:\d{2}.\d{2,3}\]/;
                     lineArr.forEach(item => {
