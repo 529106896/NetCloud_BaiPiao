@@ -36,7 +36,7 @@
                 </tr>
                 <tr v-for="item in musicList">
                     <td>{{item.name}}</td>
-                    <td>{{item.artists[0].name}}</td>
+                    <td>{{item.artists.length>1?(item.artists.length>2?item.artists[0].name+'、'+item.artists[1].name+'等':item.artists[0].name+'、'+item.artists[1].name):item.artists[0].name}}</td>
                     <td><a href="javascript:;" @click="playMusic(item.id, musicList.indexOf(item))">播放</a></td>
                 </tr>
             </table>
